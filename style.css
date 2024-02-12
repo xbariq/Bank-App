@@ -10,7 +10,7 @@ html {
 }
 
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   color: #444;
   background-color: #f3f3f3;
   height: 100vh;
@@ -135,7 +135,7 @@ nav {
   font-size: 1.1rem;
   text-transform: uppercase;
   font-weight: 500;
-  color: #fff;
+  color: #f1e6e6;
   padding: 0.1rem 1rem;
   border-radius: 10rem;
   margin-right: 2rem;
@@ -149,11 +149,11 @@ nav {
 }
 
 .movements__type--deposit {
-  background-image: linear-gradient(to top left, #39b385, #9be15d);
+  background-image: linear-gradient(to top left, #126746, #1d3d00);
 }
 
 .movements__type--withdrawal {
-  background-image: linear-gradient(to top left, #e52a5a, #ff585f);
+  background-image: linear-gradient(to top left, #f9567f, #3c0003);
 }
 
 .movements__value {
