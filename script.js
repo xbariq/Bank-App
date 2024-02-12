@@ -2,7 +2,7 @@
 
 // Data
 const account1 = {
-  owner: 'aya malik',
+  owner: 'Aya Malik',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2, // %
   pin: 1111,
@@ -74,15 +74,13 @@ const displayMovements = function (movements) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov}</div>
+        <div class="movements__value">${mov} ＄</div>
   </div>
         
         `;
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
-
-displayMovements(account1.movements);
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
@@ -96,38 +94,70 @@ const calcPrintBalance = function (arr) {
   arr.reduce(function (acc, cur) {
     const balance = acc + cur;
     console.log(balance);
-    labelBalance.innerHTML = balance;
+    labelBalance.innerHTML = `${balance}＄`;
     return balance;
   }, 0);
 };
 
-const calcDisplaySummary = function (movements) {
-  const income = movements
+const calcDisplaySummary = function (accounts) {
+  const income = accounts.movements
     .filter(mov => mov > 0)
     .reduce((acc, cur) => acc + cur, 0);
-  labelSumIn.innerHTML = `${income} €`;
+  labelSumIn.innerHTML = `${income} ＄`;
 
-  const withdraw = movements
+  const withdraw = accounts.movements
     .filter(mov => mov < 0)
     .reduce((acc, cur) => acc + cur, 0);
 
-  labelSumOut.textContent = `${Math.abs(withdraw)} € `;
+  labelSumOut.textContent = `${Math.abs(withdraw)} ＄ `;
   //only interest more or equal than 1 will be paid
-  const interest = movements
+  const interest = accounts.movements
     .filter(mov => mov > 0)
-    .map(deposit => deposit * 0.012)
+    .map(deposit => (deposit * accounts.interestRate) / 100)
     .filter(deposit => deposit >= 1)
     .reduce((acc, cur) => acc + cur, 0);
 
-  labelSumInterest.textContent = `${interest} €`;
+  labelSumInterest.textContent = `${interest} ＄`;
 };
-
-calcDisplaySummary(account1.movements);
-
-calcPrintBalance(account1.movements);
 
 const arr = [7, 99, 77, 9];
 
 const newA = arr.filter(function (num) {
   return num > 50;
+});
+
+const createUsername = function (users) {
+  users.forEach(function (user) {
+    user.username = user.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+
+createUsername(accounts);
+
+// even  handler
+
+let userName;
+btnLogin.addEventListener('click', function (e) {
+  e.preventDefault();
+  console.log('logged in');
+  userName = accounts.find(acc => acc.username === inputLoginUsername.value);
+  console.log(userName);
+  if (userName?.pin === Number(inputLoginPin.value)) {
+    labelWelcome.textContent = `Welcome back, ${userName.owner.split(' ')[0]}`;
+  }
+  containerApp.style.opacity = 100;
+
+  inputLoginUsername.value = inputLoginPin.value = '';
+
+  inputLoginPin.blur();
+
+  displayMovements(userName.movements);
+
+  calcPrintBalance(userName.movements);
+
+  calcDisplaySummary(userName);
 });
