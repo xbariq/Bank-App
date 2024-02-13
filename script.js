@@ -14,8 +14,6 @@ const account2 = {
   pin: 2222,
 };
 
-console.log();
-
 const account3 = {
   owner: 'Steven Thomas Williams',
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
@@ -86,14 +84,11 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 const euroToUsd = 1.1;
 
-console.log();
 const movementsUsd = movements.map(mov => mov * euroToUsd);
-console.log(movementsUsd);
 
 const calcPrintBalance = function (arr) {
   arr.reduce(function (acc, cur) {
     const balance = acc + cur;
-    console.log(balance);
     labelBalance.innerHTML = `${balance}＄`;
     return balance;
   }, 0);
@@ -143,7 +138,6 @@ createUsername(accounts);
 let userName;
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
-  console.log('logged in');
   userName = accounts.find(acc => acc.username === inputLoginUsername.value);
   console.log(userName);
   if (userName?.pin === Number(inputLoginPin.value)) {
