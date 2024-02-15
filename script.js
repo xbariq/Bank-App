@@ -86,12 +86,11 @@ const euroToUsd = 1.1;
 
 const movementsUsd = movements.map(mov => mov * euroToUsd);
 
-const calcPrintBalance = function (arr) {
-  arr.reduce(function (acc, cur) {
-    const balance = acc + cur;
-    labelBalance.innerHTML = `${balance}＄`;
-    return balance;
+const calcPrintBalance = function (acc) {
+  acc.balance = acc.movements.reduce(function (acc, cur) {
+    return acc + cur;
   }, 0);
+  labelBalance.innerHTML = `${acc.balance}＄`;
 };
 
 const calcDisplaySummary = function (accounts) {
@@ -133,25 +132,74 @@ const createUsername = function (users) {
 
 createUsername(accounts);
 
-// even  handler
+const updateUi = function (account) {
+  displayMovements(account.movements);
 
-let userName;
+  calcPrintBalance(account);
+
+  calcDisplaySummary(account);
+};
+
+// log in
+let currentAccount;
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
-  userName = accounts.find(acc => acc.username === inputLoginUsername.value);
-  console.log(userName);
-  if (userName?.pin === Number(inputLoginPin.value)) {
-    labelWelcome.textContent = `Welcome back, ${userName.owner.split(' ')[0]}`;
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    containerApp.style.opacity = 100;
+
+    inputLoginUsername.value = inputLoginPin.value = '';
+
+    inputLoginPin.blur();
+    updateUi(currentAccount);
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
   }
-  containerApp.style.opacity = 100;
+});
 
-  inputLoginUsername.value = inputLoginPin.value = '';
+inputCloseUsername;
 
-  inputLoginPin.blur();
+// Handle transfers between accounts
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
 
-  displayMovements(userName.movements);
+  const amount = Number(inputTransferAmount.value);
+  const receiverAccount = accounts.find(
+    account => account.username === inputTransferTo.value
+  );
+  inputTransferTo.value = inputTransferAmount.value = '';
+  inputTransferAmount.blur();
+  if (
+    amount > 0 &&
+    receiverAccount &&
+    currentAccount.balance > amount &&
+    receiverAccount?.username !== currentAccount.username
+  ) {
+    console.log('Transfer done !');
 
-  calcPrintBalance(userName.movements);
+    currentAccount.movements.push(-amount);
+    receiverAccount.movements.push(amount);
+  }
+  updateUi(currentAccount);
+});
 
-  calcDisplaySummary(userName);
+//Close account
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  if (
+    currentAccount.username === inputCloseUsername.value &&
+    currentAccount.pin === Number(inputClosePin.value)
+  ) {
+    console.log('DELETED');
+    const accountIndex = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+    accounts.splice(accountIndex, 1);
+    containerApp.style.opacity = 0;
+    labelWelcome.textContent = 'Account closed';
+  }
 });
