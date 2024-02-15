@@ -63,9 +63,12 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // ]);
 
 // console.log(movements[movements.length - 1]);
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
+  const movs = sort
+    ? movements.slice(movements).sort((a, b) => a - b)
+    : movements;
   containerMovements.innerHTML = '';
-  movements.forEach(function (mov, i) {
+  movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
     const html = ` <div class="movements__row">
@@ -217,4 +220,20 @@ btnClose.addEventListener('click', function (e) {
     containerApp.style.opacity = 0;
     labelWelcome.textContent = 'Account closed';
   }
+});
+
+const accMovements = accounts
+  .map(move => move.movements)
+  .flat()
+  .reduce((accu, cur) => accu + cur, 0);
+
+console.log(accMovements);
+
+// sorting movements
+
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
