@@ -160,8 +160,6 @@ btnLogin.addEventListener('click', function (e) {
   }
 });
 
-inputCloseUsername;
-
 // Handle transfers between accounts
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
@@ -184,6 +182,23 @@ btnTransfer.addEventListener('click', function (e) {
     receiverAccount.movements.push(amount);
   }
   updateUi(currentAccount);
+});
+
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    console.log('okay');
+    currentAccount.movements.push(amount);
+  } else {
+    alert(
+      'Amount requested exceeds the limit, you are allowed to request only 100% above your largest deposit'
+    );
+  }
+  updateUi(currentAccount);
+  inputLoanAmount.value = '';
+  inputLoanAmount.blur();
 });
 
 //Close account
