@@ -75,7 +75,7 @@ const displayMovements = function (movements, sort = false) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov} ＄</div>
+        <div class="movements__value">${mov.toFixed(2)} ＄</div>
   </div>
         
         `;
@@ -93,20 +93,20 @@ const calcPrintBalance = function (acc) {
   acc.balance = acc.movements.reduce(function (acc, cur) {
     return acc + cur;
   }, 0);
-  labelBalance.innerHTML = `${acc.balance}＄`;
+  labelBalance.innerHTML = `${acc.balance.toFixed(2)}＄`;
 };
 
 const calcDisplaySummary = function (accounts) {
   const income = accounts.movements
     .filter(mov => mov > 0)
     .reduce((acc, cur) => acc + cur, 0);
-  labelSumIn.innerHTML = `${income} ＄`;
+  labelSumIn.innerHTML = `${income.toFixed(2)} ＄`;
 
   const withdraw = accounts.movements
     .filter(mov => mov < 0)
     .reduce((acc, cur) => acc + cur, 0);
 
-  labelSumOut.textContent = `${Math.abs(withdraw)} ＄ `;
+  labelSumOut.textContent = `${Math.abs(withdraw).toFixed(2)} ＄ `;
   //only interest more or equal than 1 will be paid
   const interest = accounts.movements
     .filter(mov => mov > 0)
@@ -114,7 +114,7 @@ const calcDisplaySummary = function (accounts) {
     .filter(deposit => deposit >= 1)
     .reduce((acc, cur) => acc + cur, 0);
 
-  labelSumInterest.textContent = `${interest} ＄`;
+  labelSumInterest.textContent = `${interest.toFixed(2)} ＄`;
 };
 
 const arr = [7, 99, 77, 9];
@@ -189,7 +189,7 @@ btnTransfer.addEventListener('click', function (e) {
 
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     console.log('okay');
