@@ -69,14 +69,14 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // ]);
 
 // console.log(movements[movements.length - 1]);
-const displayMovements = function (accs, sort = false) {
+const displayMovements = function (acc, sort = false) {
   const movs = sort
-    ? accs.movements.slice().sort((a, b) => a - b)
-    : accs.movements;
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
   containerMovements.innerHTML = '';
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
-    const date = new Date(accs.movementsDates[i]);
+    const date = new Date(acc.movementsDates[i]);
     const year = date.getFullYear();
     const month = `${date.getMonth() + 1}`.padStart(2, 0);
     const day = `${date.getDate()}`.padStart(2, 0);
@@ -260,6 +260,6 @@ console.log(accMovements);
 let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
