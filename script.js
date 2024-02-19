@@ -74,7 +74,6 @@ const inputClosePin = document.querySelector('.form__input--pin');
 //   ["GBP", "Pound sterling"],
 // ]);
 
-// console.log(movements[movements.length - 1]);
 const displayMovements = function (acc, sort = false) {
   const movs = sort
     ? acc.movements.slice().sort((a, b) => a - b)
@@ -132,13 +131,13 @@ const calcDisplaySummary = function (accounts) {
   const income = accounts.movements
     .filter(mov => mov > 0)
     .reduce((acc, cur) => acc + cur, 0);
-  labelSumIn.innerHTML = `${income.toFixed(2)} ＄`;
+  labelSumIn.innerHTML = `${income.toFixed(2)}＄`;
 
   const withdraw = accounts.movements
     .filter(mov => mov < 0)
     .reduce((acc, cur) => acc + cur, 0);
 
-  labelSumOut.textContent = `${Math.abs(withdraw).toFixed(2)} ＄ `;
+  labelSumOut.textContent = `${Math.abs(withdraw).toFixed(2)}＄ `;
   //only interest more or equal than 1 will be paid
   const interest = accounts.movements
     .filter(mov => mov > 0)
@@ -146,7 +145,7 @@ const calcDisplaySummary = function (accounts) {
     .filter(deposit => deposit >= 1)
     .reduce((acc, cur) => acc + cur, 0);
 
-  labelSumInterest.textContent = `${interest.toFixed(2)} ＄`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}＄`;
 };
 
 const arr = [7, 99, 77, 9];
@@ -165,6 +164,26 @@ const createUsername = function (users) {
   });
 };
 
+const startTimerLogOut = function () {
+  const tick = function () {
+    let min = String(Math.trunc(time / 60)).padStart(2, 0);
+    let sec = String(time % 60).padStart(2, 0);
+    labelTimer.textContent = `${min} : ${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      labelTimer.textContent = `${min} : ${0}0`;
+      containerApp.style.opacity = 0;
+      labelWelcome.textContent = 'You have been logged out due to inactivity';
+    }
+    time--;
+  };
+  let time = 600;
+  tick();
+  const timer = setInterval(tick, 1000);
+  return timer;
+};
+
 const updateUi = function (account) {
   displayMovements(account);
 
@@ -174,7 +193,7 @@ const updateUi = function (account) {
 };
 
 // log in
-let currentAccount;
+let currentAccount, timer;
 
 createUsername(accounts);
 btnLogin.addEventListener('click', function (e) {
@@ -189,6 +208,9 @@ btnLogin.addEventListener('click', function (e) {
 
     inputLoginPin.blur();
     updateUi(currentAccount);
+    if (timer) clearInterval(timer);
+    timer = startTimerLogOut();
+
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
     }`;
@@ -227,6 +249,8 @@ btnTransfer.addEventListener('click', function (e) {
     receiverAccount.movementsDates.push(new Date().toISOString)();
   }
   updateUi(currentAccount);
+  clearInterval(timer);
+  timer = startTimerLogOut();
 });
 
 btnLoan.addEventListener('click', function (e) {
@@ -242,9 +266,12 @@ btnLoan.addEventListener('click', function (e) {
       'Amount requested exceeds the limit, you are allowed to request only 100% above your largest deposit'
     );
   }
+
   updateUi(currentAccount);
   inputLoanAmount.value = '';
   inputLoanAmount.blur();
+  clearInterval(timer);
+  timer = startTimerLogOut();
 });
 
 //Close account
